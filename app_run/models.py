@@ -11,7 +11,7 @@ class Run(models.Model):
         on_delete=models.CASCADE,
         related_name='runs',
     )
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
 
     class Meta:
