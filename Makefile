@@ -4,7 +4,7 @@ run:
 migrate:
 	python manage.py migrate --settings=project_run.settings.local
 
-makemigrations:
+migrations:
 	python manage.py makemigrations --settings=project_run.settings.local
 
-.PHONY: run migrate makemigrations
+.PHONY: run migrate migrations
