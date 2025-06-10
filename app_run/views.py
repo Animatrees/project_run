@@ -39,11 +39,9 @@ class GetUsersView(viewsets.ReadOnlyModelViewSet):
     #     return qs
 
     def get_queryset(self):
-        qs = self.queryset
+        qs = self.queryset.exclude(is_superuser=True)
         user_type = self.request.query_params.get('type', None)
-        is_staff = settings.RUNNER_ROLE.get(user_type, None)
-
-        if is_staff is not None:
+        if user_type:
+            is_staff = True if user_type == 'coach' else False
             qs = qs.filter(is_staff=is_staff)
-
         return qs
