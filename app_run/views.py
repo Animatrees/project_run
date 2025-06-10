@@ -28,20 +28,12 @@ class GetUsersView(viewsets.ReadOnlyModelViewSet):
     queryset = user.objects.all()
     serializer_class = UsersSerializer
 
-    # def get_queryset(self):
-    #     qs = self.queryset.exclude(is_superuser=True)
-    #     user_type = self.request.query_params.get('type', None)
-    #     is_staff = settings.RUNNER_ROLE.get(user_type, None)
-    #
-    #     if is_staff is not None:
-    #         qs = qs.filter(is_staff=is_staff)
-    #
-    #     return qs
-
     def get_queryset(self):
         qs = self.queryset.exclude(is_superuser=True)
         user_type = self.request.query_params.get('type', None)
-        if user_type:
-            is_staff = True if user_type == 'coach' else False
+        is_staff = settings.RUNNER_ROLE.get(user_type, None)
+
+        if is_staff is not None:
             qs = qs.filter(is_staff=is_staff)
+
         return qs
