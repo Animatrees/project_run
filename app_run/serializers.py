@@ -13,11 +13,10 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 
 class RunSerializer(serializers.ModelSerializer):
-    # athlete_data = UserInfoSerializer(source='athlete', read_only=True)
-    athlete_data = UserInfoSerializer(source='athlete')
+    athlete_info = UserInfoSerializer(source='athlete', read_only=True)
     class Meta:
         model = Run
-        fields = ['id', 'athlete', 'created_at', 'comment', 'athlete_data']
+        fields = ['id', 'athlete', 'created_at', 'comment', 'athlete_info']
 
 
 class UsersSerializer(serializers.ModelSerializer):
