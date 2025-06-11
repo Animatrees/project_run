@@ -9,14 +9,15 @@ user = get_user_model()
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
-        fields = ['id', 'username', 'last_name', 'first_name']
+        # fields = ['id', 'username', 'last_name', 'first_name']
+        fields = ['username', 'last_name', 'first_name']
 
 
 class RunSerializer(serializers.ModelSerializer):
-    athlete_info = UserInfoSerializer(source='athlete', read_only=True)
+    athlete_data = UserInfoSerializer(source='athlete', read_only=True)
     class Meta:
         model = Run
-        fields = ['id', 'athlete', 'created_at', 'comment', 'athlete_info']
+        fields = ['id', 'athlete', 'created_at', 'comment', 'athlete_data']
 
 
 class UsersSerializer(serializers.ModelSerializer):
