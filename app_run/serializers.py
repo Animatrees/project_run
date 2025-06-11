@@ -9,8 +9,7 @@ user = get_user_model()
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
-        # fields = ['id', 'username', 'last_name', 'first_name']
-        fields = ['username', 'last_name', 'first_name']
+        fields = ['id', 'username', 'last_name', 'first_name']
 
 
 class RunSerializer(serializers.ModelSerializer):
