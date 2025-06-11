@@ -30,5 +30,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/company_details/', company_details_view),
     path('', include(router.urls)),
-    path('__debug__/', include('debug_toolbar.urls')),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
