@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.conf import settings
@@ -27,6 +28,8 @@ class RunViewSet(viewsets.ModelViewSet):
 class GetUsersView(viewsets.ReadOnlyModelViewSet):
     queryset = user.objects.all()
     serializer_class = UsersSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['first_name', 'last_name']
 
     def get_queryset(self):
         qs = self.queryset.exclude(is_superuser=True)
