@@ -29,7 +29,8 @@ class GetUsersView(viewsets.ReadOnlyModelViewSet):
     queryset = user.objects.all()
     serializer_class = UsersSerializer
     filter_backends = [SearchFilter]
-    search_fields = ['first_name', 'last_name']
+    # search_fields = ['first_name', 'last_name']
+    search_fields = ['first_name']
 
     def get_queryset(self):
         qs = self.queryset.exclude(is_superuser=True)
