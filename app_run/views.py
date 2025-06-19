@@ -46,7 +46,8 @@ class GetUsersView(viewsets.ReadOnlyModelViewSet):
 
 class RunStartedView(APIView):
     def post(self, request, run_id):
-        run = get_object_or_404(Run, id=run_id)
+        # run = get_object_or_404(Run, id=run_id)
+        run = Run.objects.get(id=run_id)
         if run.status != Status.INIT:
             return Response(
                 {"detail": "Run cannot be started from the current status."},
