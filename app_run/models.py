@@ -5,9 +5,9 @@ user = get_user_model()
 
 
 class Status(models.TextChoices):
-    INIT = 'INIT', 'init'
-    IN_PROGRESS = 'WIP', 'in_progress'
-    FINISHED = 'DONE', 'finished'
+    INIT = 'init', 'init'
+    IN_PROGRESS = 'in_progress', 'in_progress'
+    FINISHED = 'finished', 'finished'
 
 
 class Run(models.Model):
@@ -19,7 +19,7 @@ class Run(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
     status = models.CharField(
-        max_length=4,
+        max_length=15,
         choices=Status,
         default=Status.INIT,
     )

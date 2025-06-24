@@ -14,7 +14,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = UserInfoSerializer(source='athlete', read_only=True)
-    status = serializers.CharField(source='get_status_display', read_only=True)
+    status = serializers.CharField(read_only=True)
 
     class Meta:
         model = Run
