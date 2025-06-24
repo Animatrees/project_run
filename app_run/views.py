@@ -36,8 +36,10 @@ class RunViewSet(viewsets.ModelViewSet):
 class GetUsersView(viewsets.ReadOnlyModelViewSet):
     queryset = user.objects.all()
     serializer_class = UsersSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['first_name', 'last_name']
+    ordering_fields = ['date_joined']
+    pagination_class = GeneralPagination
 
     def get_queryset(self):
         qs = self.queryset.exclude(is_superuser=True)
