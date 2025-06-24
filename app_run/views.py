@@ -46,8 +46,7 @@ class GetUsersView(viewsets.ReadOnlyModelViewSet):
 
 class RunStartedView(APIView):
     def post(self, request, run_id):
-        # run = get_object_or_404(Run, id=run_id)
-        run = Run.objects.get(id=run_id)
+        run = get_object_or_404(Run, id=run_id)
         if run.status != Status.INIT:
             return Response(
                 {"detail": "Run cannot be started from the current status."},
@@ -64,11 +63,16 @@ class RunStartedView(APIView):
 class RunStoppedView(APIView):
     def post(self, request, run_id):
         run = get_object_or_404(Run, id=run_id)
-        if run.status != Status.IN_PROGRESS:
+        # if run.status != Status.IN_PROGRESS:
+        #     return Response(
+        #         {"detail": "Run cannot be finished from the current status."},
+        #         status=status.HTTP_400_BAD_REQUEST
+        #     )
+        if run.status == Status.INIT:
             return Response(
-                {"detail": "Run cannot be finished from the current status."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+                        {"detail": "Run must be started in order to finish it."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
         run.status = Status.FINISHED
         run.save()
