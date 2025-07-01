@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from rest_framework import serializers
-from .models import Run
+from .models import Run, AthleteInfo
 
-user = get_user_model()
+User = get_user_model()
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = user
+        model = User
         fields = ['id', 'username', 'last_name', 'first_name']
 
 
@@ -26,7 +26,7 @@ class UsersSerializer(serializers.ModelSerializer):
     runs_finished = serializers.SerializerMethodField()
 
     class Meta:
-        model = user
+        model = User
         fields = ['id', 'date_joined', 'username', 'last_name', 'first_name', 'type', 'runs_finished']
 
     def get_type(self, obj):
@@ -35,3 +35,18 @@ class UsersSerializer(serializers.ModelSerializer):
 
     def get_runs_finished(self, obj):
         return obj.runs_finished
+
+
+class AthleteInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AthleteInfo
+        fields = ['weight', 'goals']
+
+    def validate_weight(self, value):
+        if value is not None and value <= 0:
+            raise serializers.ValidationError('Вес должен быть больше 0.')
+
+        if value is not None and value >= 900:
+            raise serializers.ValidationError('Вес должен быть меньше 900.')
+
+        return value
