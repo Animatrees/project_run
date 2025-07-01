@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-user = get_user_model()
+User = get_user_model()
 
 
 class Status(models.TextChoices):
@@ -12,7 +12,7 @@ class Status(models.TextChoices):
 
 class Run(models.Model):
     athlete = models.ForeignKey(
-        user,
+        User,
         on_delete=models.CASCADE,
         related_name='runs',
     )
@@ -28,3 +28,17 @@ class Run(models.Model):
         db_table = 'run'
         verbose_name = 'Забег'
         verbose_name_plural = 'Забеги'
+
+
+class AthleteInfo(models.Model):
+
+    weight = models.FloatField(
+        null=True,
+        blank=True,
+    )
+    goals = models.TextField(blank=True, default='')
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
