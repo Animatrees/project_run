@@ -38,9 +38,14 @@ class UsersSerializer(serializers.ModelSerializer):
 
 
 class AthleteInfoSerializer(serializers.ModelSerializer):
+    user_id = serializers.SerializerMethodField()
+
     class Meta:
         model = AthleteInfo
-        fields = ['weight', 'goals']
+        fields = ['weight', 'goals', 'user_id']
+
+    def get_user_id(self, obj):
+        return obj.user.id
 
     def validate_weight(self, value):
         if value is not None and value <= 0:
