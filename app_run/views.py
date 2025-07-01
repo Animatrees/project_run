@@ -9,11 +9,11 @@ from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.views import APIView
 
-from app_run.models import Run, Status
+from app_run.models import Run, Status, AthleteInfo
 from app_run.pagination import GeneralPagination
-from app_run.serializers import RunSerializer, UsersSerializer
+from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer
 
-user = get_user_model()
+User = get_user_model()
 
 
 @api_view(['GET'])
@@ -35,7 +35,7 @@ class RunViewSet(viewsets.ModelViewSet):
 
 
 class GetUsersView(viewsets.ReadOnlyModelViewSet):
-    queryset = user.objects.annotate(
+    queryset = User.objects.annotate(
         runs_finished=Count('runs', filter=Q(runs__status=Status.FINISHED))
     )
     serializer_class = UsersSerializer
@@ -60,7 +60,7 @@ class RunStartedView(APIView):
         run = get_object_or_404(Run, id=run_id)
         if run.status != Status.INIT:
             return Response(
-                {"detail": "Run cannot be started from the current status."},
+                {"detail": 'Run cannot be started from the current status.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -76,7 +76,7 @@ class RunStoppedView(APIView):
         run = get_object_or_404(Run, id=run_id)
         if run.status != Status.IN_PROGRESS:
             return Response(
-                {"detail": "Run cannot be finished from the current status."},
+                {"detail": 'Run cannot be finished from the current status.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -85,3 +85,22 @@ class RunStoppedView(APIView):
         return Response({
             'status': Status.FINISHED.label,
         })
+
+
+class AthleteInfoView(APIView):
+    def get(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        athlete_info, _ = AthleteInfo.objects.get_or_create(user=user)
+
+        serializer = AthleteInfoSerializer(athlete_info)
+        return Response(serializer.data)
+
+    def put(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        athlete_info, _ = AthleteInfo.objects.get_or_create(user=user)
+
+        serializer = AthleteInfoSerializer(instance=athlete_info, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
