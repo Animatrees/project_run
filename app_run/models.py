@@ -32,7 +32,7 @@ class Run(models.Model):
 
 class AthleteInfo(models.Model):
 
-    weight = models.FloatField(
+    weight = models.IntegerField(
         null=True,
         blank=True,
     )
