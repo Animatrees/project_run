@@ -31,7 +31,6 @@ class Run(models.Model):
 
 
 class AthleteInfo(models.Model):
-
     weight = models.IntegerField(
         null=True,
         blank=True,
@@ -41,4 +40,13 @@ class AthleteInfo(models.Model):
         User,
         on_delete=models.CASCADE,
         primary_key=True,
+    )
+
+
+class Challenge(models.Model):
+    full_name = models.CharField(max_length=100)
+    athlete = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='challenges'
     )
