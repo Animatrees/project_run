@@ -9,9 +9,9 @@ from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.views import APIView
 
-from app_run.models import Run, Status, AthleteInfo
+from app_run.models import Run, Status, AthleteInfo, Challenge
 from app_run.pagination import GeneralPagination
-from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer
+from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer, ChallengeSerializer
 
 User = get_user_model()
 
@@ -82,6 +82,12 @@ class RunStoppedView(APIView):
 
         run.status = Status.FINISHED
         run.save()
+        finished_runs = Run.objects.filter(athlete=run.athlete, status=Status.FINISHED).count()
+        if finished_runs == 10:
+            Challenge.objects.get_or_create(
+                full_name='Сделай 10 Забегов!',
+                athlete=run.athlete,
+            )
         return Response({
             'status': Status.FINISHED.label,
         })
@@ -104,3 +110,10 @@ class AthleteInfoView(APIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetChallengesView(viewsets.ReadOnlyModelViewSet):
+    queryset = Challenge.objects.select_related('athlete').all()
+    serializer_class = ChallengeSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['athlete']

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from rest_framework import serializers
-from .models import Run, AthleteInfo
+from .models import Run, AthleteInfo, Challenge
 
 User = get_user_model()
 
@@ -55,3 +55,11 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Вес должен быть меньше 900.')
 
         return value
+
+
+class ChallengeSerializer(serializers.ModelSerializer):
+    athlete_id = serializers.IntegerField(source='athlete.id')
+
+    class Meta:
+        model = Challenge
+        fields = ['full_name', 'athlete_id']
