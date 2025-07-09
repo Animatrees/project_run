@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from rest_framework import serializers
-from .models import Run, AthleteInfo, Challenge
+from .models import Run, AthleteInfo, Challenge, Position, Status
 
 User = get_user_model()
 
@@ -58,8 +58,36 @@ class AthleteInfoSerializer(serializers.ModelSerializer):
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
-    athlete = serializers.IntegerField(source='athlete.id')
-
     class Meta:
         model = Challenge
         fields = ['full_name', 'athlete']
+
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = ['run', 'latitude', 'longitude']
+
+    def validate_run(self, value):
+        if value.status != Status.IN_PROGRESS:
+            raise serializers.ValidationError('Забег должен быть запущен')
+        return value
+
+    def _is_value_in_range(self, min_value, max_value, value, text):
+        if not (min_value <= value <= max_value):
+            raise serializers.ValidationError(
+                f'Значение {text} должно находиться в диапазоне от {min_value}° до {max_value}°')
+
+    def validate_latitude(self, value):
+        min_value = -90.0
+        max_value = 90.0
+        text = 'широты'
+        self._is_value_in_range(min_value, max_value, value, text)
+        return value
+
+    def validate_longitude(self, value):
+        min_value = -180.0
+        max_value = 180.0
+        text = 'долготы'
+        self._is_value_in_range(min_value, max_value, value, text)
+        return value
