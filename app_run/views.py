@@ -9,9 +9,10 @@ from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.views import APIView
 
-from app_run.models import Run, Status, AthleteInfo, Challenge
+from app_run.models import Run, Status, AthleteInfo, Challenge, Position
 from app_run.pagination import GeneralPagination
-from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer, ChallengeSerializer
+from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer, ChallengeSerializer, \
+    PositionSerializer
 
 User = get_user_model()
 
@@ -117,3 +118,10 @@ class GetChallengesView(viewsets.ReadOnlyModelViewSet):
     serializer_class = ChallengeSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['athlete']
+
+
+class PositionViewSet(viewsets.ModelViewSet):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['run']

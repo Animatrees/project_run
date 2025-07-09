@@ -3,12 +3,13 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from app_run.views import company_details_view, RunViewSet, GetUsersView, RunStartedView, RunStoppedView, \
-    AthleteInfoView, GetChallengesView
+    AthleteInfoView, GetChallengesView, PositionViewSet
 
 router = DefaultRouter()
 router.register('api/runs', RunViewSet)
 router.register('api/users', GetUsersView)
 router.register('api/challenges', GetChallengesView)
+router.register('api/positions', PositionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
