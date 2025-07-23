@@ -15,10 +15,11 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class RunSerializer(serializers.ModelSerializer):
     athlete_data = UserInfoSerializer(source='athlete', read_only=True)
     status = serializers.CharField(read_only=True)
+    distance = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Run
-        fields = ['id', 'athlete', 'created_at', 'comment', 'athlete_data', 'status']
+        fields = ['id', 'athlete', 'created_at', 'comment', 'athlete_data', 'status', 'distance']
 
 
 class UsersSerializer(serializers.ModelSerializer):

@@ -23,6 +23,7 @@ class Run(models.Model):
         choices=Status,
         default=Status.INIT,
     )
+    distance = models.FloatField(default=0.00, blank=True)
 
     class Meta:
         db_table = 'run'
