@@ -9,10 +9,12 @@ from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.views import APIView
 
+from app_run.mappers import get_coordinates_from_run
 from app_run.models import Run, Status, AthleteInfo, Challenge, Position
 from app_run.pagination import GeneralPagination
 from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer, ChallengeSerializer, \
     PositionSerializer
+from app_run.services.distance_service import get_route_distance, Coordinates
 
 User = get_user_model()
 
@@ -82,7 +84,13 @@ class RunStoppedView(APIView):
             )
 
         run.status = Status.FINISHED
+
+        coords = get_coordinates_from_run(run)
+        distance = get_route_distance(coords)
+        run.distance = distance
+
         run.save()
+
         finished_runs = Run.objects.filter(athlete=run.athlete, status=Status.FINISHED).count()
         if finished_runs == 10:
             Challenge.objects.get_or_create(
