@@ -1,5 +1,5 @@
 from app_run.models import Run
-from app_run.services.distance_service import Coordinates
+from app_run.services.geopy_service import Coordinates
 
 
 def get_coordinates_from_run(run: Run) -> list[Coordinates]:
