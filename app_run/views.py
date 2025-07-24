@@ -9,12 +9,11 @@ from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.views import APIView
 
-from app_run.mappers import get_coordinates_from_run
 from app_run.models import Run, Status, AthleteInfo, Challenge, Position
 from app_run.pagination import GeneralPagination
 from app_run.serializers import RunSerializer, UsersSerializer, AthleteInfoSerializer, ChallengeSerializer, \
     PositionSerializer
-from app_run.services.distance_service import get_route_distance, Coordinates
+from app_run.services.run_service import start_run, stop_run
 
 User = get_user_model()
 
@@ -61,44 +60,30 @@ class GetUsersView(viewsets.ReadOnlyModelViewSet):
 class RunStartedView(APIView):
     def post(self, request, run_id):
         run = get_object_or_404(Run, id=run_id)
-        if run.status != Status.INIT:
+        try:
+            run = start_run(run)
+        except ValueError as e:
             return Response(
-                {"detail": 'Run cannot be started from the current status.'},
+                {"detail": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        run.status = Status.IN_PROGRESS
-        run.save()
         return Response({
-            'status': Status.IN_PROGRESS.label,
+            'status': run.status.label,
         })
 
 
 class RunStoppedView(APIView):
     def post(self, request, run_id):
         run = get_object_or_404(Run, id=run_id)
-        if run.status != Status.IN_PROGRESS:
+        try:
+            run = stop_run(run)
+        except ValueError as e:
             return Response(
-                {"detail": 'Run cannot be finished from the current status.'},
+                {"detail": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        run.status = Status.FINISHED
-
-        coords = get_coordinates_from_run(run)
-        distance = get_route_distance(coords)
-        run.distance = distance
-
-        run.save()
-
-        finished_runs = Run.objects.filter(athlete=run.athlete, status=Status.FINISHED).count()
-        if finished_runs == 10:
-            Challenge.objects.get_or_create(
-                full_name='Сделай 10 Забегов!',
-                athlete=run.athlete,
-            )
         return Response({
-            'status': Status.FINISHED.label,
+            'status': run.status.label,
         })
 
 
