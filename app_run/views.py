@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
-from openpyxl import load_workbook
 from rest_framework.decorators import api_view
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import get_object_or_404, GenericAPIView
-from rest_framework.parsers import FileUploadParser, MultiPartParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from django.conf import settings
@@ -132,13 +131,18 @@ class UploadCollectibleItemsView(GenericAPIView):
     parser_classes = [MultiPartParser]
     serializer_class = FileUploadSerializer
 
+    def get_queryset(self) -> None:
+        pass
+
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+
         if serializer.is_valid():
             uploaded_file = serializer.validated_data['file']
             failed = import_xlsx_with_serializer(
                 uploaded_file=uploaded_file,
                 serializer_class=CollectibleItemSerializer,
                 fields=['name', 'uid', 'value', 'latitude', 'longitude', 'picture'])
-            return Response({'failed': failed})
+            return Response(failed, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
