@@ -3,18 +3,20 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from app_run.views import company_details_view, RunViewSet, GetUsersView, RunStartedView, RunStoppedView, \
-    AthleteInfoView, GetChallengesView, PositionViewSet
+    AthleteInfoView, GetChallengesView, PositionViewSet, CollectibleItemViewSet, UploadCollectibleItemsView
 
 router = DefaultRouter()
 router.register('api/runs', RunViewSet)
 router.register('api/users', GetUsersView)
 router.register('api/challenges', GetChallengesView)
 router.register('api/positions', PositionViewSet)
+router.register('api/collectible_item', CollectibleItemViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/company_details/', company_details_view),
     path('api/runs/<int:run_id>/start/', RunStartedView.as_view(), name='run-started'),
+    path('api/upload_file/', UploadCollectibleItemsView.as_view(), name='upload-file'),
     path('api/runs/<int:run_id>/stop/', RunStoppedView.as_view(), name='run-stopped'),
     path('api/athlete_info/<int:user_id>/', AthleteInfoView.as_view(), name='athlete_info'),
     path('', include(router.urls)),
